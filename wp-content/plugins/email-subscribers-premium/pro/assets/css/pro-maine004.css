@@ -1,0 +1,107 @@
+.icegram .es_captcha *{
+	display: inline;
+}
+input.es_captcha_input{
+	margin-right: .5em;
+}
+.icegram input.es_captcha_input{
+	display: inline-block; 
+	width: 5em;
+	height: 2.5em;
+	margin-right: .3em;
+}
+.icegram button.es_captcha_verify{
+	height: 2.5em;
+	line-height: 1;
+}
+.form-invisible{
+	visibility: hidden;
+	position: absolute;
+	left: -5000px;
+}
+a .es-button{
+	text-decoration: none;
+}
+
+button.es_captcha_verify{
+	padding: .6em 1em; 
+	border: none;
+	background: #333;
+	background-color: #333;
+	color: #fff;
+	width: auto;
+	margin: 0;
+	margin-top: .5em;
+	border-radius: 2px;
+	line-height: normal;
+	opacity: 1;
+}
+button.es_captcha_verify:active,
+button.es_captcha_verify:focus,
+button.es_captcha_verify:hover{
+	opacity: .9;
+}
+
+
+/* Newsletter Archive - START */
+
+.es-archive-container {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    margin: 0 auto 32px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #EDEADE;
+}
+
+.es-archive-container .es-archive-year {
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 150%;
+    margin-right: 32px;
+    width: 80px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.es-archive-container .es-archive-row {
+    /* display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox; */
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.es-archive-row .es-archive-date {
+    font-weight: bold;
+    font-size: 13px;
+    /* line-height: 160%; */
+    /* display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex; */
+    -webkit-box-align: end;
+    -webkit-align-items: flex-end;
+    -ms-flex-align: end;
+    align-items: flex-end;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #757575;
+    margin-right: 16px;
+    min-width: 60px;
+}
+
+.es-archive-row .es-archive-subject {
+    /* font-weight: bold; */
+    font-size: 18px;
+    /* line-height: 165%; */
+    /* padding-top: 8px; */
+    padding-bottom: 5px;
+}
+
+/* Newsletter Archive - END */

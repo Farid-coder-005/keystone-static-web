@@ -1,0 +1,30 @@
+.elementor-10898 .elementor-element.elementor-element-325dc91{--display:flex;}.elementor-10898 .elementor-element.elementor-element-f39b7be{--display:flex;--min-height:469px;--margin-top:-3em;--margin-bottom:9em;--margin-left:-1em;--margin-right:2em;--padding-top:-13%;--padding-bottom:-15%;--padding-left:9%;--padding-right:19%;}.elementor-10898 .elementor-element.elementor-element-f39b7be.e-con{--align-self:stretch;--flex-grow:0;--flex-shrink:0;}.elementor-widget-text-editor{font-family:var( --e-global-typography-text-font-family ), Sans-serif;font-weight:var( --e-global-typography-text-font-weight );color:var( --e-global-color-text );}.elementor-widget-text-editor.elementor-drop-cap-view-stacked .elementor-drop-cap{background-color:var( --e-global-color-primary );}.elementor-widget-text-editor.elementor-drop-cap-view-framed .elementor-drop-cap, .elementor-widget-text-editor.elementor-drop-cap-view-default .elementor-drop-cap{color:var( --e-global-color-primary );border-color:var( --e-global-color-primary );}.elementor-10898 .elementor-element.elementor-element-5e6a08a4{margin:0px 0px calc(var(--kit-widget-spacing, 0px) + 0px) 0px;column-gap:0px;}@media(min-width:768px){.elementor-10898 .elementor-element.elementor-element-f39b7be{--width:99.728%;}}/* Start custom CSS for text-editor, class: .elementor-element-5e6a08a4 *//* Reduce input box height */
+.elementor-10898 .elementor-element.elementor-element-5e6a08a4 input,
+.elementor-10898 .elementor-element.elementor-element-5e6a08a4 select,
+.elementor-10898 .elementor-element.elementor-element-5e6a08a4 textarea {
+  padding: 6px 10px !important;  /* adjust inside space */
+  font-size: 14px !important;    /* smaller text */
+  height: 35px !important;       /* force smaller box height */
+}
+
+/* Reduce spacing between fields */
+.elementor-10898 .elementor-element.elementor-element-5e6a08a4 .elementor-field-group {
+  margin-bottom: 10px !important; /* decrease gap between fields */
+}/* End custom CSS */
+/* Start custom CSS for container, class: .elementor-element-f39b7be */.elementor-10898 .elementor-element.elementor-element-f39b7be input,
+.elementor-10898 .elementor-element.elementor-element-f39b7be select {
+  height: 30px !important;   /* reduce height */
+  font-size: 13px !important;
+  padding: 4px 8px !important;
+}
+
+.elementor-10898 .elementor-element.elementor-element-f39b7be textarea {
+  min-height: 70px !important;  /* smaller text area */
+  font-size: 13px !important;
+  padding: 6px 8px !important;
+}
+
+.elementor-10898 .elementor-element.elementor-element-f39b7be label {
+  font-size: 13px !important;
+  margin-bottom: 3px !important;
+}/* End custom CSS */
