@@ -125,7 +125,7 @@
   }
 
   function isCoreField(name) {
-    return /^(firstname|lastname|email|phone|phone[-_]?iti|phono-code(-[a-z]{2})?|tel-code(-[a-z]{2})?|your-name(-[a-z]{2})?|your-sname(-[a-z]{2})?|your-email(-[a-z]{2})?)$/i.test(
+    return /^(firstname|lastname|full[-_]?name|email|phone|phone[-_]?iti|phono-code(-[a-z]{2})?|tel-code(-[a-z]{2})?|your-name(-[a-z]{2})?|your-sname(-[a-z]{2})?|your-email(-[a-z]{2})?)$/i.test(
       name
     );
   }
@@ -135,7 +135,9 @@
     "field[2]": "WhatsApp",
     "field[4]": "Business",
     "field[24]": "Business website",
-    "acceptance-369": "Urgent callback requested"
+    "acceptance-369": "Urgent callback requested",
+    "preferred_datetime": "Preferred Date & Time",
+    "topic": "Topic / Message"
   };
 
   function prettify(str) {
@@ -168,6 +170,7 @@
   }
 
   function buildPayload(form, entries) {
+    var fullNameEl = findField(form, [/^full[-_]?name$/i]);
     var firstEl = findField(form, [/^firstname$/i, /^first_name$/i, /^your-name(-[a-z]{2})?$/i]);
     var lastEl = findField(form, [/^lastname$/i, /^last_name$/i, /^surname$/i, /^your-sname(-[a-z]{2})?$/i]);
     var emailEl = findField(form, [/^email$/i, /^your-email(-[a-z]{2})?$/i, /^e-mail$/i]);
@@ -184,6 +187,12 @@
 
     var first = valueOf(firstEl);
     var last = valueOf(lastEl);
+    var explicitFullName = valueOf(fullNameEl);
+    if (!first && !last && explicitFullName) {
+      var nameParts = explicitFullName.split(/\s+/);
+      first = nameParts.shift() || "";
+      last = nameParts.join(" ");
+    }
     var email = valueOf(emailEl);
     var code = valueOf(codeEl).replace(/^\+/, "");
     var number = valueOf(phoneEl).replace(/^\+/, "");
