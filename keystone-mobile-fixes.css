@@ -1,0 +1,59 @@
+/*!
+ * KEYSTONE mobile layout fixes
+ * Loaded after the theme's inline CSS so these rules win at small widths.
+ *  - Long Elementor headlines (especially German compound words) wrap instead
+ *    of overflowing the viewport.
+ *  - Wide comparison tables scroll inside the content column instead of
+ *    stretching the whole page.
+ *  - input[type=tel] width override and phone field flex-shrinking.
+ *  - .keystone-cards-grid single column on narrow mobile viewports.
+ */
+
+input[type="tel"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.keystone-phone-flex > * {
+  min-width: 0 !important;
+}
+
+@media (max-width: 680px) {
+  .elementor-headline,
+  .elementor-headline-dynamic-wrapper,
+  .elementor-headline-dynamic-text {
+    max-width: 100% !important;
+  }
+
+  #content table,
+  .entry-content table,
+  .elementor-widget-text-editor table,
+  .elementor-widget-html table,
+  .elementor-text-editor table {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .keystone-cards-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  h1,
+  h1.entry-title,
+  .entry-content h1,
+  .elementor-headline,
+  .elementor-headline-dynamic-text,
+  .elementor-headline-plain-text {
+    font-size: clamp(24px, 7vw, 32px) !important;
+    line-height: 1.15 !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}

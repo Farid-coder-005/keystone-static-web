@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page not found - KEYSTONE</title>
+  <meta name="description" content="The page you requested could not be found. Return to the KEYSTONE homepage or contact our corporate, tax and residency advisors." />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="icon" href="/logo2.png?v=2" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/logo2.png?v=2" />
+  <link rel="stylesheet" href="/keystone-mobile-fixes.css?v=1" />
+  <style>
+    :root {
+      --navy: #06274a;
+      --blue: #1565c0;
+      --blue-dark: #0d47a1;
+      --ink: #1e293b;
+      --muted: #475569;
+      --line: #e2e8f0;
+      --bg: #f8fafc;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    a { color: var(--blue); }
+    img { max-width: 100%; height: auto; }
+    .site-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 2px 10px rgba(6, 39, 74, 0.05);
+    }
+    .container {
+      width: 100%;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 18px;
+    }
+    .header-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 74px;
+      padding: 10px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--navy);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .brand img { height: 44px; width: auto; display: block; }
+    .brand span { font-size: 18px; }
+    .site-nav { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+    .site-nav a {
+      color: var(--navy);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 4px 0;
+    }
+    .site-nav a:hover, .site-nav a:focus { color: var(--blue); text-decoration: underline; }
+    main {
+      flex: 1 0 auto;
+      display: flex;
+      align-items: center;
+      padding: 48px 0 64px;
+    }
+    .error-card {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 12px 34px rgba(6, 39, 74, 0.08);
+      padding: 44px 28px;
+      text-align: center;
+    }
+    .error-code {
+      margin: 0;
+      font-size: clamp(64px, 18vw, 104px);
+      line-height: 1;
+      font-weight: 800;
+      color: var(--blue);
+      letter-spacing: -0.03em;
+    }
+    h1 {
+      margin: 14px 0 10px;
+      color: var(--navy);
+      font-size: clamp(22px, 6vw, 30px);
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+    .error-card p {
+      margin: 0 auto 26px;
+      max-width: 560px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 12px 22px;
+      border-radius: 8px;
+      border: 2px solid var(--blue);
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-primary { background: var(--blue); color: #ffffff; }
+    .btn-primary:hover, .btn-primary:focus { background: var(--blue-dark); border-color: var(--blue-dark); }
+    .btn-secondary { background: #ffffff; color: var(--blue); }
+    .btn-secondary:hover, .btn-secondary:focus { background: #e3f2fd; }
+    .quick-links {
+      border-top: 1px solid var(--line);
+      padding-top: 22px;
+    }
+    .quick-links h2 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    .quick-links ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 20px;
+    }
+    .quick-links a { font-size: 14px; font-weight: 600; text-decoration: none; }
+    .quick-links a:hover, .quick-links a:focus { text-decoration: underline; }
+    .site-footer {
+      flex-shrink: 0;
+      background: var(--navy);
+      color: #cbd5e1;
+      padding: 24px 0;
+      font-size: 13.5px;
+    }
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 24px;
+    }
+    .site-footer a { color: #e2e8f0; text-decoration: none; }
+    .site-footer a:hover, .site-footer a:focus { text-decoration: underline; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+    .site-footer p { margin: 0; }
+    @media (max-width: 680px) {
+      .header-inner { flex-direction: column; align-items: flex-start; }
+      .site-nav { gap: 4px 14px; }
+      .error-card { padding: 34px 18px; }
+      main { padding: 32px 0 48px; }
+      .actions { flex-direction: column; }
+      .btn { width: 100%; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/index.html" rel="home">
+        <img  src="/wp-content/uploads/2026/01/cropped-logo-keystone-JPG-freigetsellt-1.png" width="1360" height="659" alt="KEYSTONE" />
+        <span>KEYSTONE</span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="/index.html">Home</a>
+        <a href="/business-services.html">Services</a>
+        <a href="/company-structures.html">Company Structures</a>
+        <a href="/international-tax-planning-and-substance.html">Tax &amp; Compliance</a>
+        <a href="/know-how.html">Know-How</a>
+        <a href="/contact-us.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="error-card">
+        <p class="error-code">404</p>
+        <h1>This page could not be found</h1>
+        <p>The address may be mistyped, or the page may have moved. Use the links below to continue, or contact our team and we will point you in the right direction.</p>
+        <div class="actions">
+          <a class="btn btn-primary" href="/index.html">Back to homepage</a>
+          <a class="btn btn-secondary" href="/contact-us.html">Contact us</a>
+        </div>
+        <div class="quick-links">
+          <h2>Popular pages</h2>
+          <ul>
+            <li><a href="/malta-company.html">Malta company formation</a></li>
+            <li><a href="/switzerland-company.html">Switzerland company formation</a></li>
+            <li><a href="/slovakia-company.html">Slovakia company formation</a></li>
+            <li><a href="/uae-company-formation-taxation-and-residence.html">UAE company formation</a></li>
+            <li><a href="/book-consultation.html">Book a consultation</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; 2026 KEYSTONE. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="/imprint.html">Imprint</a>
+        <a href="/data-protection-and-privacy-notice.html">Privacy notice</a>
+        <a href="/general-terms-conditions-services.html">Terms &amp; conditions</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

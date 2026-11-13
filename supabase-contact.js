@@ -36,6 +36,23 @@
   var HONEYPOT_NAME = "website_url";
   var inFlight = false;
 
+  /* Hard character caps, mirrored by the maxlength attributes in the forms
+     and by the CHECK constraints in supabase_security_hardening.sql.
+     Truncating here protects against programmatically filled fields that
+     bypass the native maxlength attribute. */
+  var MAX_LENGTHS = {
+    name: 120,
+    email: 180,
+    phone: 40,
+    topic: 200,
+    message: 2000
+  };
+
+  function cap(value, max) {
+    if (typeof value !== "string") return value;
+    return value.length > max ? value.slice(0, max) : value;
+  }
+
   function readStamps() {
     try {
       var raw = window.localStorage.getItem(RATE_LIMIT_KEY);
@@ -224,6 +241,9 @@
       if (!v || v === "~|") return;
       if (name.charAt(0) === "_") return; // CF7 internal fields
       if (/^(u|f|s|c|m|act|v|or)$/i.test(name)) return; // ActiveCampaign internals
+      if (/^topic$/i.test(name)) {
+        v = cap(v, MAX_LENGTHS.topic);
+      }
       entries.push({ name: name, value: v });
     });
     return entries;
@@ -316,7 +336,12 @@
       }
     }
 
-    var fullName = [first, last].filter(Boolean).join(" ");
+    first = cap(first, MAX_LENGTHS.name);
+    last = cap(last, MAX_LENGTHS.name);
+    email = cap(email, MAX_LENGTHS.email);
+    phone = cap(phone, MAX_LENGTHS.phone);
+
+    var fullName = cap([first, last].filter(Boolean).join(" "), MAX_LENGTHS.name);
     if (!fullName) fullName = first || last || email || "Website visitor";
 
     var isNewsletter = form.id === "keystone-newsletter-form" || (form.getAttribute && form.getAttribute("data-form-type") === "newsletter");
@@ -324,6 +349,7 @@
     var finalMessage = (customMsgEl && customMsgEl.value && customMsgEl.value.trim())
       ? customMsgEl.value.trim()
       : (isNewsletter ? ("[NEWSLETTER SUBSCRIPTION] Name: " + (first || "Subscriber") + ", Email: " + email) : buildMessage(entries));
+    finalMessage = cap(finalMessage, MAX_LENGTHS.message);
 
     var payload = {
       first_name: first || null,
@@ -348,8 +374,8 @@
       if (emailCandidates.length) emailEl = emailCandidates[0];
     }
 
-    var firstName = valueOf(firstEl);
-    var email = valueOf(emailEl);
+    var firstName = cap(valueOf(firstEl), MAX_LENGTHS.name);
+    var email = cap(valueOf(emailEl), MAX_LENGTHS.email);
 
     // The terms checkbox is required; validation must have passed before this
     // is called, so a required consent checkbox is checked by now.
