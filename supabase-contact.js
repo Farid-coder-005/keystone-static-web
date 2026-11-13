@@ -17,9 +17,114 @@
   window.__supabaseContactInitialized = true;
 
   var SUPABASE_URL = "https://tdclubxaiwdgntauhmiv.supabase.co";
+  // Publishable (anon-equivalent) client key. Safe to ship to browsers: it is
+  // not a JWT and carries no elevated/backend privileges. Never put a secret
+  // key or an elevated JWT in this file.
   var SUPABASE_ANON_KEY = "sb_publishable_4OxRSNdZqTYKfScQQWjpTw_RysGxgQm";
   var TABLE = "contact_submissions";
   var STATUS_CLASS = "supabase-form-status";
+
+  /* ------------------------------------------------------------------ */
+  /* Abuse protection (client side)                                      */
+  /* ------------------------------------------------------------------ */
+
+  var RATE_LIMIT_KEY = "keystone_form_rate_limit_v1";
+  var RATE_LIMIT_MAX = 3; // submissions per browser ...
+  var RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // ... per 10 minutes
+  var RATE_LIMIT_COOLDOWN_MS = 15 * 1000; // minimum gap between requests
+  var HONEYPOT_ATTR = "data-supabase-honeypot";
+  var HONEYPOT_NAME = "website_url";
+  var inFlight = false;
+
+  function readStamps() {
+    try {
+      var raw = window.localStorage.getItem(RATE_LIMIT_KEY);
+      if (!raw) return [];
+      var parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      var now = Date.now();
+      return parsed.filter(function (stamp) {
+        return typeof stamp === "number" && now - stamp >= 0 && now - stamp < RATE_LIMIT_WINDOW_MS;
+      });
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function writeStamps(stamps) {
+    try {
+      window.localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(stamps));
+    } catch (err) {
+      /* Storage can be unavailable (private mode); fail open, the server
+         side trigger in supabase_security_hardening.sql is the real limit. */
+    }
+  }
+
+  function checkRateLimit() {
+    var stamps = readStamps();
+    var now = Date.now();
+    var last = stamps.length ? Math.max.apply(null, stamps) : 0;
+
+    if (last && now - last < RATE_LIMIT_COOLDOWN_MS) {
+      var wait = Math.ceil((RATE_LIMIT_COOLDOWN_MS - (now - last)) / 1000);
+      return {
+        ok: false,
+        message:
+          "Please wait " + wait + " second" + (wait === 1 ? "" : "s") +
+          " before sending another message."
+      };
+    }
+
+    if (stamps.length >= RATE_LIMIT_MAX) {
+      var oldest = Math.min.apply(null, stamps);
+      var minutes = Math.max(1, Math.ceil((RATE_LIMIT_WINDOW_MS - (now - oldest)) / 60000));
+      return {
+        ok: false,
+        message:
+          "Too many messages have been sent from this browser. Please try again in about " +
+          minutes + " minute" + (minutes === 1 ? "" : "s") + "."
+      };
+    }
+
+    return { ok: true };
+  }
+
+  function recordSubmission() {
+    var stamps = readStamps();
+    stamps.push(Date.now());
+    if (stamps.length > RATE_LIMIT_MAX) {
+      stamps = stamps.slice(stamps.length - RATE_LIMIT_MAX);
+    }
+    writeStamps(stamps);
+  }
+
+  // Invisible field that real visitors never fill in. Automated form fillers
+  // usually populate every text input, so a non-empty value is a strong bot
+  // signal. Such submissions are accepted with a fake success message and
+  // never reach the Supabase API.
+  function ensureHoneypot(form) {
+    if (form.querySelector("[" + HONEYPOT_ATTR + "]")) return;
+    var wrapper = document.createElement("div");
+    wrapper.setAttribute("aria-hidden", "true");
+    wrapper.style.cssText =
+      "position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;";
+    var input = document.createElement("input");
+    input.type = "text";
+    input.name = HONEYPOT_NAME;
+    input.id = "supabase-hp-" + Math.random().toString(36).slice(2, 10);
+    input.tabIndex = -1;
+    input.autocomplete = "off";
+    input.setAttribute("autocapitalize", "off");
+    input.setAttribute("spellcheck", "false");
+    input.setAttribute(HONEYPOT_ATTR, "1");
+    wrapper.appendChild(input);
+    form.appendChild(wrapper);
+  }
+
+  function isHoneypotFilled(form) {
+    var input = form.querySelector("[" + HONEYPOT_ATTR + "]");
+    return !!(input && String(input.value || "").trim());
+  }
 
   function getClient() {
     if (!window.supabase || typeof window.supabase.createClient !== "function") {
@@ -556,7 +661,23 @@
   /* ------------------------------------------------------------------ */
 
   async function handleSubmit(form) {
+    if (inFlight) return;
+
     clearStatus(form);
+    ensureHoneypot(form);
+
+    // Silent bot rejection: pretend everything worked, send nothing.
+    if (isHoneypotFilled(form)) {
+      clearForm(form);
+      showStatus(form, "success", "Thank you! Your message has been sent successfully.");
+      return;
+    }
+
+    var limit = checkRateLimit();
+    if (!limit.ok) {
+      showStatus(form, "info", limit.message);
+      return;
+    }
 
     var validation = validateForm(form);
     if (!validation.ok) {
@@ -568,18 +689,21 @@
     var entries = collectEntries(form);
     var payload = buildPayload(form, entries);
 
-    setBusy(form, true);
+    inFlight = true;
+    form.setAttribute("aria-busy", "true");
 
     try {
+      recordSubmission();
+      setBusy(form, true);
       var result = await saveSubmission(payload);
 
       if (result.error) {
         console.error("[Supabase contact] Insert failed:", result.error);
-        var detail = result.error.message ? " (" + result.error.message + ")" : "";
+        // Never surface raw database errors (schema/column names) to visitors.
         showStatus(
           form,
           "error",
-          "Sorry, your submission could not be sent" + detail + ". Please try again."
+          "Sorry, your submission could not be sent. Please try again."
         );
         return;
       }
@@ -595,12 +719,30 @@
         "Sorry, your submission could not be sent. Please check your connection and try again."
       );
     } finally {
+      inFlight = false;
+      form.removeAttribute("aria-busy");
       setBusy(form, false);
     }
   }
 
   async function handleNewsletterSubmit(form) {
+    if (inFlight) return;
+
     clearStatus(form);
+    ensureHoneypot(form);
+
+    // Silent bot rejection: pretend everything worked, send nothing.
+    if (isHoneypotFilled(form)) {
+      clearForm(form);
+      showStatus(form, "success", "Thank you for subscribing!");
+      return;
+    }
+
+    var limit = checkRateLimit();
+    if (!limit.ok) {
+      showStatus(form, "info", limit.message);
+      return;
+    }
 
     var validation = validateForm(form);
     if (!validation.ok) {
@@ -611,9 +753,12 @@
 
     var payload = buildNewsletterPayload(form);
 
-    setBusy(form, true);
+    inFlight = true;
+    form.setAttribute("aria-busy", "true");
 
     try {
+      recordSubmission();
+      setBusy(form, true);
       var result = await saveNewsletter(payload);
 
       if (result.error) {
@@ -643,8 +788,25 @@
         "Sorry, your subscription could not be saved. Please check your connection and try again."
       );
     } finally {
+      inFlight = false;
+      form.removeAttribute("aria-busy");
       setBusy(form, false);
     }
+  }
+
+  // Add the honeypot to forms that already exist, and to forms injected later
+  // by Contact Form 7 / ActiveCampaign.
+  function prepareForms() {
+    var forms = document.querySelectorAll("form");
+    for (var i = 0; i < forms.length; i++) {
+      if (isContactForm(forms[i]) || isNewsletterForm(forms[i])) ensureHoneypot(forms[i]);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", prepareForms);
+  } else {
+    prepareForms();
   }
 
   // Capture phase so the original handler (Contact Form 7 / ActiveCampaign)

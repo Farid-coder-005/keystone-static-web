@@ -4,3 +4,6 @@
 hts-cache/
 _keystone_backup/
 color-backup-original/
+
+# Security runbook - never publish with the static site
+supabase_security_hardening.sql
